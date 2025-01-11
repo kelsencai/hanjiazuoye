@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>福喜的寒假作业管理系统</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    .task-input {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .task-input input,
+    .task-input select {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .task-input button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #ffdd57;
+      color: #1e3c72;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .task-list {
+      list-style: none;
+      padding: 0;
+    }
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .task-item.completed {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+    .task-item button {
+      background: #ff6b6b;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .priority {
+      font-weight: bold;
+      color: #ffdd57;
+    }
+    .deadline {
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>福喜的寒假作业管理系统</h1>
+  <div class="container">
+    <div class="task-input">
+      <input type="text" id="taskInput" placeholder="输入作业名称">
+      <input type="date" id="deadlineInput">
+      <select id="priorityInput">
+        <option value="low">低优先级</option>
+        <option value="medium">中优先级</option>
+        <option value="high">高优先级</option>
+      </select>
+      <button onclick="addTask()">添加作业</button>
+    </div>
+    <ul class="task-list" id="taskList"></ul>
+  </div>
+
+  <script>
+    let tasks = [];
+
+    // 添加作业
+    function addTask() {
+      const taskInput = document.getElementById('taskInput');
+      const deadlineInput = document.getElementById('deadlineInput');
+      const priorityInput = document.getElementById('priorityInput');
+      const taskText = taskInput.value.trim();
+      const deadline = deadlineInput.value;
+      const priority = priorityInput.value;
+
+      if (taskText && deadline) {
+        tasks.push({ text: taskText, deadline, priority, completed: false });
+        taskInput.value = '';
+        deadlineInput.value = '';
+        renderTasks();
+      } else {
+        alert('请填写作业名称和截止日期！');
+      }
+    }
+
+    // 渲染任务列表
+    function renderTasks() {
+      const taskList = document.getElementById('taskList');
+      // 按截止日期排序
+      tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+      // 过滤未完成的任务
+      const incompleteTasks = tasks.filter(task => !task.completed);
+      taskList.innerHTML = incompleteTasks.map((task, index) => `
+        <li class="task-item">
+          <span>
+            ${task.text}
+            <span class="priority">(${task.priority})</span>
+            <span class="deadline">截止日期：${task.deadline}</span>
+          </span>
+          <button onclick="toggleTask(${index})">完成</button>
+        </li>
+      `).join('');
+    }
+
+    // 切换任务状态
+    function toggleTask(index) {
+      tasks[index].completed = !tasks[index].completed;
+      renderTasks();
+    }
+  </script>
+</body>
+</html>
